@@ -140,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 'الوطني للأم',
                                 style: myTextStyle,
                               ),
-                             numberfeld(naMidController),
+                              numberfeld(naMidController),
                             ],
                           ),
                           Column(
@@ -150,7 +150,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                 'عدد الافراد',
                                 style: myTextStyle,
                               ),
-                              
                               numberfeld(nofamilyController)
                             ],
                           ),
@@ -180,12 +179,89 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   Directionality(
                     textDirection: TextDirection.rtl,
-                    child: checkrow('غدائية', food, 'حرامات', cleaning),
-                  ),
-                  Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: checkrow('  فرش', bed, "حاجات اخرى", others),
-                  ),
+                    child: Row(
+                      
+                      children:[ Row(
+                        children: [
+                          Row(
+                            children: [
+                              Checkbox(
+                                value: food,
+                                onChanged: (value) {
+                                  setState(() {
+                                    food = value!;
+                                    print(food);
+                                  });
+                                },
+                              ),
+                              Text("غذائيه"),
+                            ],
+                          ),
+                          
+                          SizedBox(width: 200,),
+                           Row(
+                            children: [
+                              Checkbox(
+                                value: cleaning,
+                                onChanged: (value) {
+                                  setState(() {
+                                    cleaning = value!;
+                                    print(cleaning);
+                                  });
+                                },
+                              ),
+                              Text("حرامات"),
+                            ],
+                          ),
+                          
+                        ],
+                      ),
+                       ],),),
+                      
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Row(
+                          children: [
+                            Row(
+                              children: [
+                                Row(
+                                  children: [
+                                    Checkbox(
+                                      value: bed,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          bed = value!;
+                                          print(bed);
+                                        });
+                                      },
+                                    ),
+                                    Text("  فرش"),
+                                  ],
+                                ), 
+                                
+                                SizedBox(width: 200,),
+                                Row(
+                                  children: [
+                                    Checkbox(
+                                      value: others,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          others = value!;
+                                          print(others);
+                                        });
+                                      },
+                                    ),
+                                    Text("حاجات اخرى"),
+                                  ],
+                                ),
+                                
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                                 
+                  
                   Directionality(
                     textDirection: TextDirection.rtl,
                     child: Column(
@@ -201,7 +277,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: TextFormField(
                             maxLines: 4,
                             controller: notesController,
-                            
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius:
@@ -212,37 +287,38 @@ class _MyHomePageState extends State<MyHomePage> {
                       ],
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      
-                        _submitForm();
-                        // Show a snackbar to confirm submission
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('تم الإرسال بنجاح'),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
+                  TextButton(
+                    
 
-                        cardnocontroller.clear();
-                        fatherNameController.clear();
-                        motherNameController.clear();
-                        placeController.clear();
-                        naFidfController.clear();
-                        naMidController.clear();
-                        nofamilyController.clear();
-                        numberController.clear();
-                        notesController.clear();
-                        setState(() {
-                          food = false;
-                          others = false;
-                          bed = false;
-                          cleaning = false;
-                        });
-                      
+
+                    onPressed: () {
+                      _submitForm();
+                      // Show a snackbar to confirm submission
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('تم الإرسال بنجاح'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+
+                      cardnocontroller.clear();
+                      fatherNameController.clear();
+                      motherNameController.clear();
+                      placeController.clear();
+                      naFidfController.clear();
+                      naMidController.clear();
+                      nofamilyController.clear();
+                      numberController.clear();
+                      notesController.clear();
+                      setState(() {
+                        food = false;
+                        others = false;
+                        bed = false;
+                        cleaning = false;
+                      });
                     },
                     child: Text(
-                      'Submit',
+                      'ارسل المعلومات',
                       style: TextStyle(fontSize: _isTablet ? 24 : 16),
                     ),
                   ),
@@ -257,57 +333,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   TextFormField namefeld(TextEditingController namedControler) {
     return TextFormField(
-                              controller: namedControler,
-                              keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(6))),
-                              ),
-                            );
+      controller: namedControler,
+      keyboardType: TextInputType.text,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(6))),
+      ),
+    );
   }
 
   TextFormField numberfeld(TextEditingController textediter) {
     return TextFormField(
-                              controller: textediter,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10))),
-                              ),
-                            );
-  }
-
-  Row checkrow(String text1, bool check, String text2, bool check2) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        checkbox(check),
-        Text(
-          text1,
-          style: myTextStyle,
-        ),
-        SizedBox(
-          width: _isTablet ? 220 : 20,
-        ),
-        checkbox(check2),
-        Text(
-          text2,
-          style: myTextStyle,
-        ),
-      ],
-    );
-  }
-
-  Checkbox checkbox(bool isChecked) {
-    return Checkbox(
-      value: isChecked,
-      onChanged: (value) {
-        setState(() {
-          isChecked = value!;
-        });
-      },
+      controller: textediter,
+      keyboardType: TextInputType.text,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10))),
+      ),
     );
   }
 
@@ -364,6 +406,10 @@ class _MyHomePageState extends State<MyHomePage> {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     });
+    final List<Map<String, dynamic>> data = await database.then(
+      (db) => db.query('my_table'),
+    );
+    print(data);
   }
 }
 
