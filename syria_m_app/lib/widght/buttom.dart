@@ -8,15 +8,18 @@ class Buttom extends StatefulWidget {
   final Function function;
   final String successMessage;
   final String errorMessage;
-  final bool pop;
+
 
   Buttom({
+
     Key? key,
     required this.text,
     required this.function,
     required this.successMessage,
     required this.errorMessage,
-    required this.pop,
+  
+    
+
 
   });
 
@@ -45,10 +48,7 @@ class _ButtomState extends State<Buttom> {
                     : Color.fromARGB(255, 255, 0, 0),
               ),
             );
-            if(widget.pop)
-            {
-              Navigator.pop(context);
-            }
+            
           } catch (e) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

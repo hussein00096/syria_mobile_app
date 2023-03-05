@@ -1,10 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:mysql_client/mysql_client.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:uuid/uuid.dart';
-Future<bool> migrateData() async { 
-  
+Future<bool> migrateData(BuildContext context) async { 
+  var datas;
   var connectivityResult = await Connectivity().checkConnectivity();
   if (connectivityResult == ConnectivityResult.none) {
     // No internet connectivity
@@ -34,14 +35,47 @@ print('object');
     (db) => db.query('my_table'),
   );
 print(data);
-print(conn);
   // Insert the retrieved data into the MySQL database.
  try {
 
 for (final row in data) {
+final IResultSet existingRows = await conn.execute(
+  'SELECT * FROM my_table WHERE cardId = :cardId',
+  {'cardId': row['cardId']},
+) ;
+print(existingRows);
+if (existingRows.rows.isNotEmpty) {
+ 
+  bool addRow = await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Directionality(
+        textDirection: TextDirection.rtl,
+        child: AlertDialog( 
+          title: Text('هذه الاستماره موجودة سابقا'),
+          content: Text('${row['fatherName']} أستمارة بأسم ${row['cardId']}  برقم بطاقة هل تريد أضافتها '),
+          actions: [
+            TextButton(
+              child: Text('كلا'),
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+            TextButton(
+              child: Text('اضافة الاستمارة'),
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+
+  if (!addRow) {
+    continue;
+  }
+}
   final uuidv4 = Uuid().v4();
   print(uuidv4);
-  await conn.execute(
+  datas= await conn.execute(
   'INSERT INTO my_table (id, cardId, fatherName, motherName, nafatherID, naMatherID, noFamily, place, foods, beds, cleaning, other, notes, phoneno) '
   'VALUES (:id, :cardId, :fatherName, :motherName, :nafatherID, :naMatherID, :noFamily, :place, :foods, :beds, :cleaning, :other, :notes, :phoneno)',
   {
@@ -102,8 +136,9 @@ for (final row in data) {
 
   await openDatabase(path.join(databasePath, '_databaseh.db')).then((db)=>db.delete('my_table'));
   await conn.close();
+if (datas.isNotEmpty){return true;}else{return false;}
 
-   return true;
+   
  } catch (e) {
 print(e);
   return false;

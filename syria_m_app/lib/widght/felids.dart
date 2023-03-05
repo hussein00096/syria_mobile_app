@@ -28,6 +28,7 @@ class _feldsState extends State<felds> {
           style: myTextStyle,
         ),
        TextFormField(
+        
    inputFormatters: [
 
     

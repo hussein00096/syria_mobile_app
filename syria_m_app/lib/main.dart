@@ -2,8 +2,9 @@
 
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:mysql1/mysql1.dart';
+
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart';
 import 'package:syria_m_app/widght/buttom.dart';
@@ -16,6 +17,17 @@ import 'widght/felids.dart';
 
 void main() {
   runApp(MyApp());
+  //  Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
+  //   if (result == ConnectivityResult.mobile || result == ConnectivityResult.wifi) {
+  //     // If internet is available, call migrateData() function
+  //     bool migrationResult = await migrateData();
+  //     if (migrationResult) {
+  //       print('Data migrated successfully!');
+  //     } else {
+  //       print('No data to migrate.');
+  //     }
+  //   }
+  // });
 }
 
 class MyApp extends StatelessWidget {
@@ -62,252 +74,258 @@ class _MyHomePageState extends State<MyHomePage> {
   bool bed = false;
   bool cleaning = false;
   bool _isTablet = false;
-
   @override
   Widget build(BuildContext context) {
     _isTablet = MediaQuery.of(context).size.shortestSide >= 600;
     final hight = MediaQuery.of(context).size.height;
     final wight = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        
-        toolbarHeight: 0.1 * hight,
-        title: _isTablet
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onLongPress: _onLogoPressed,
-                    child: Image.asset(
-                      'images/logo.png',
-                      height: _isTablet ? 130 : 40,
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    "استمارة المستفيدين من حشد الاغاثة",
-                    style: _isTablet ? mytittleTextStyle : myTextStylemobile,
-                  ),
-                ],
-              )
-            : Center(
-                child: Column(
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          
+          toolbarHeight:_isTablet? 0.1 * hight:0.13 *hight,
+          title: _isTablet
+              ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset(
+                    GestureDetector(
+                      onLongPress: _onLogoPressed,
+                      child: Image.asset(
                         'images/logo.png',
-                        height: _isTablet ? 60 : 40,
+                        height:  hight * 0.12  ,
                       ),
+                    ),
                     SizedBox(width: 10),
                     Text(
                       "استمارة المستفيدين من حشد الاغاثة",
                       style: _isTablet ? mytittleTextStyle : myTextStylemobile,
                     ),
                   ],
+                )
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onLongPress: _onLogoPressed,
+                        child: Image.asset(
+                            'images/logo.png',
+                            height:  hight * 0.09,
+                          ),
+                      ),
+                   
+                      Text(
+                        "استمارة المستفيدين من حشد الاغاثة",
+                        style: _isTablet ? mytittleTextStyle : myTextStylemobile,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-        backgroundColor: Colors.white,
-        elevation: 6,
-        shadowColor: Colors.grey.withOpacity(0.5),
-        shape: Border(
-          bottom: BorderSide(
-            color: Colors.grey.withOpacity(0.5),
-            width: 1,
+          backgroundColor: Colors.white,
+          elevation: 6,
+          shadowColor: Colors.grey.withOpacity(0.5),
+          shape: Border(
+            bottom: BorderSide(
+              color: Colors.grey.withOpacity(0.5),
+              width: 1,
+            ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Container(
-            margin: EdgeInsets.all(_isTablet ? 50 : 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("المعلومات", style: mytittleTextStyle),
-                SizedBox(
-                  height: 20,
-                ),
-
-                Form(
-                  key: _formKey,
-                  child: Directionality(
+        body: SingleChildScrollView(
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Container(
+              margin: EdgeInsets.all(_isTablet ? hight * 0.05 : hight * 0.02),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("المعلومات", style: mytittleTextStyle),
+                  SizedBox(
+                    height: hight * 0.02,
+                  ),
+    
+                  Form(
+                    key: _formKey,
+                    child: Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: GridView.count(
+                        physics: NeverScrollableScrollPhysics(),
+                        childAspectRatio: _isTablet ? 2.5 : 3,
+                        shrinkWrap: true,
+                        crossAxisCount: _isTablet ? 2 : 1,
+                        mainAxisSpacing: _isTablet ? 0 : 0,
+                        crossAxisSpacing: _isTablet ? wight * 0.08 : wight * 0.005,
+                        children: [
+                          felds(
+                              text: 'رقم البطاقة',
+                              textEditingController: cardnocontroller),
+                          felds(
+                              text: 'اسم الاب',
+                              textEditingController: fatherNameController),
+                          felds(
+                              text: 'الوطني للأب',
+                              textEditingController: naFidfController),
+                          felds(
+                              text: 'اسم الأم',
+                              textEditingController: motherNameController),
+                          felds(
+                              text: 'الوطني للأم',
+                              textEditingController: naMidController),
+                          felds(
+                              text: 'عدد الافراد',
+                              textEditingController: nofamilyController),
+                          felds(
+                              text: "السكن",
+                              textEditingController: placeController),
+                          felds(
+                              text: 'رقم الهاتف',
+                              textEditingController: numberController),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Directionality(
                     textDirection: TextDirection.rtl,
-                    child: GridView.count(
-                      physics: NeverScrollableScrollPhysics(),
-                      childAspectRatio: _isTablet ? 2.5 : 3,
-                      shrinkWrap: true,
-                      crossAxisCount: _isTablet ? 2 : 1,
-                      mainAxisSpacing: _isTablet ? 0 : 0,
-                      crossAxisSpacing: _isTablet ? 48 : 2,
+                    child: Row(
                       children: [
-                        felds(
-                            text: 'رقم البطاقة',
-                            textEditingController: cardnocontroller),
-                        felds(
-                            text: 'اسم الاب',
-                            textEditingController: fatherNameController),
-                        felds(
-                            text: 'الوطني للأب',
-                            textEditingController: naFidfController),
-                        felds(
-                            text: 'اسم الأم',
-                            textEditingController: motherNameController),
-                        felds(
-                            text: 'الوطني للأم',
-                            textEditingController: naMidController),
-                        felds(
-                            text: 'عدد الافراد',
-                            textEditingController: nofamilyController),
-                        felds(
-                            text: "السكن",
-                            textEditingController: placeController),
-                        felds(
-                            text: 'رقم الهاتف',
-                            textEditingController: numberController),
+                        CheckboxRow(
+                          text: "غذائيه",
+                          checkvalue: food,
+                          onChanged: (value) {
+                            setState(() {
+                              food = value;
+                            });
+                          },
+                        ),
+                        SizedBox(
+                           width: _isTablet ? wight * 0.335 : wight * 0.07,
+                        ),
+                        CheckboxRow(
+                            text: "حرامات",
+                            checkvalue: cleaning,
+                            onChanged: (value) {
+                              setState(() {
+                                cleaning = value;
+                              });
+                            }),
                       ],
                     ),
                   ),
-                ),
-                Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: Row(
-                    children: [
-                      CheckboxRow(
-                        text: "غذائيه",
-                        checkvalue: food,
-                        onChanged: (value) {
-                          setState(() {
-                            food = value;
-                          });
-                        },
-                      ),
-                      SizedBox(
-                        width: _isTablet ? 280 : 30,
-                      ),
-                      CheckboxRow(
-                          text: "حرامات",
-                          checkvalue: cleaning,
-                          onChanged: (value) {
-                            setState(() {
-                              cleaning = value;
-                            });
-                          }),
-                    ],
+    
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: Row(
+                      children: [
+                        CheckboxRow(
+                            text: "  فرش",
+                            checkvalue: bed,
+                            onChanged: (value) {
+                              setState(() {
+                                bed = value;
+                              });
+                            }),
+                        SizedBox(
+                           width: _isTablet ? wight * 0.335 : wight * 0.07,
+                        ),
+                        CheckboxRow(
+                            text: "حاجات اخرى",
+                            checkvalue: others,
+                            onChanged: (value) {
+                              setState(() {
+                                others = value;
+                              });
+                            }),
+                      ],
+                    ),
                   ),
-                ),
-
-                Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: Row(
-                    children: [
-                      CheckboxRow(
-                          text: "  فرش",
-                          checkvalue: bed,
-                          onChanged: (value) {
-                            setState(() {
-                              bed = value;
-                            });
-                          }),
-                      SizedBox(
-                        width: _isTablet ? 280 : 30,
-                      ),
-                      CheckboxRow(
-                          text: "حاجات اخرى",
-                          checkvalue: others,
-                          onChanged: (value) {
-                            setState(() {
-                              others = value;
-                            });
-                          }),
-                    ],
+                  SizedBox(
+                    height: 10,
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "الملاحظات",
-                        style: mytittleTextStyle,
-                      ),
-                      SizedBox(
-                        height: 144,
-                        width: 690,
-                        child: TextFormField(
-                          maxLines: 4,
-                          controller: notesController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(6))),
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "الملاحظات",
+                          style: mytittleTextStyle,
+                        ),
+                        SizedBox(
+                          height: 144,
+                          width: 690,
+                          child: TextFormField(
+                            maxLines: 4,
+                            controller: notesController,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(6))),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Buttom(
-                    text: 'حفظ الاستمارة',
-                    function: _submitForm,
-                    successMessage: "تم حفظ الاستمارة",
-                    errorMessage: "خطأ لم تتم عملية الحفظ",
-                    pop: false,),
-                //                 ElevatedButton(
-                //                   style: ElevatedButton.styleFrom(
-                //   shape: RoundedRectangleBorder(
-                //     borderRadius: BorderRadius.circular(6),
-                //   ),
-                // ),
-                //                   onPressed: () {
-                //                     _submitForm();
-                //                     // Show a snackbar to confirm submission
-                //                     ScaffoldMessenger.of(context).showSnackBar(
-                //                       SnackBar(
-                //                         content: Text('تم الإرسال بنجاح'),
-                //                         duration: Duration(seconds: 2),
-                //                       ),
-                //                     );
+                  Buttom(
+                      text: 'حفظ الاستمارة',
+                      function: _submitForm,
+                      successMessage: "تم حفظ الاستمارة",
+                      errorMessage: "خطأ لم تتم عملية الحفظ",
+                      ),
 
-                //                     cardnocontroller.clear();
-                //                     fatherNameController.clear();
-                //                     motherNameController.clear();
-                //                     placeController.clear();
-                //                     naFidfController.clear();
-                //                     naMidController.clear();
-                //                     nofamilyController.clear();
-                //                     numberController.clear();
-                //                     notesController.clear();
-                //                     setState(() {
-                //                       food = false;
-                //                       others = false;
-                //                       bed = false;
-                //                       cleaning = false;
-                //                     });
-                //                   },
-                //                   child: Text(
-                //                     'ارسل المعلومات',
-                //                     style: TextStyle(fontSize: _isTablet ? 24 : 16),
-                //                   ),
-                //                 ),
-                
-                //                 ElevatedButton(
-                //         child: Text("رفع حميع المعلومات"),
-                //         onPressed: () {
-                //           // Call the migrateData function when the button is pressed
-                //         },
-                //         style: ElevatedButton.styleFrom(
-                //   shape: RoundedRectangleBorder(
-                //     borderRadius: BorderRadius.circular(6),
-                //       ),
-
-                //   ),
-                // ),
-              ],
+                     
+                  //                 ElevatedButton(
+                  //                   style: ElevatedButton.styleFrom(
+                  //   shape: RoundedRectangleBorder(
+                  //     borderRadius: BorderRadius.circular(6),
+                  //   ),
+                  // ),
+                  //                   onPressed: () {
+                  //                     _submitForm();
+                  //                     // Show a snackbar to confirm submission
+                  //                     ScaffoldMessenger.of(context).showSnackBar(
+                  //                       SnackBar(
+                  //                         content: Text('تم الإرسال بنجاح'),
+                  //                         duration: Duration(seconds: 2),
+                  //                       ),
+                  //                     );
+    
+                  //                     cardnocontroller.clear();
+                  //                     fatherNameController.clear();
+                  //                     motherNameController.clear();
+                  //                     placeController.clear();
+                  //                     naFidfController.clear();
+                  //                     naMidController.clear();
+                  //                     nofamilyController.clear();
+                  //                     numberController.clear();
+                  //                     notesController.clear();
+                  //                     setState(() {
+                  //                       food = false;
+                  //                       others = false;
+                  //                       bed = false;
+                  //                       cleaning = false;
+                  //                     });
+                  //                   },
+                  //                   child: Text(
+                  //                     'ارسل المعلومات',
+                  //                     style: TextStyle(fontSize: _isTablet ? 24 : 16),
+                  //                   ),
+                  //                 ),
+                  
+                  //                 ElevatedButton(
+                  //         child: Text("رفع حميع المعلومات"),
+                  //         onPressed: () {
+                  //           // Call the migrateData function when the button is pressed
+                  //         },
+                  //         style: ElevatedButton.styleFrom(
+                  //   shape: RoundedRectangleBorder(
+                  //     borderRadius: BorderRadius.circular(6),
+                  //       ),
+    
+                  //   ),
+                  // ),
+                ],
+              ),
             ),
           ),
         ),
@@ -462,7 +480,7 @@ class _MyHomePageState extends State<MyHomePage> {
 //       _startTimer();
 //     });
 //   }
- final int holdTime = 5;
+ 
   bool isLogoPressed = false;
 
   Future<void> _onLogoPressed() async {
@@ -470,7 +488,7 @@ class _MyHomePageState extends State<MyHomePage> {
       isLogoPressed = true;
     });
 
-    await Future.delayed(Duration(seconds: holdTime));
+
 
     if (isLogoPressed) {
       showDialog(
@@ -482,22 +500,63 @@ class _MyHomePageState extends State<MyHomePage> {
               title: Text("رفع جميع المعلومات"),
               content: Text("هل تريد رفع جميع المعلومات؟"),
               actions: [
-                TextButton(
-                  child: Text("لا"),
+                ElevatedButton(
+                  child: const Text("لا", style: mybuttomtextstyle,),
+                 style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6),
+          ),
+        ),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
               
-                
+                ElevatedButton(
+        child: Text(
+         "نعم",
+          style: mybuttomtextstyle,
+        ),
+        onPressed: () async {
+          try {
+         
+            bool result=await migrateData(context);
+          
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(result ? "تم رفع جميع المعلومات بنجاح" :" لم تتم عمليه رفع المعلومات",),
+                duration: Duration(seconds: 3),
+                backgroundColor: result
+                    ? Color.fromARGB(255, 30, 171, 9)
+                    : Color.fromARGB(255, 255, 0, 0),
+              ),
+            );
+            Navigator.pop(context);
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("خطا لم تتم عمليه رفع المعلومات"),
+                duration: Duration(seconds: 3),
+                backgroundColor: Color.fromARGB(255, 255, 0, 0),
+              ),
+            );
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6),
+          ),
+        ),
+      ),
                   
                     
-                    Buttom(
-                    text: "نعم",
-                    function: migrateData,
-                    successMessage: "تم رفع جميع المعلومات بنجاح",
-                    errorMessage: "خطا لم تتم عمليه رفع المعلومات",
-                    pop: true,),
+                    // Buttom(
+                    // text: "نعم",
+                    // function: migrateData,
+                    // successMessage: "تم رفع جميع المعلومات بنجاح",
+                    // errorMessage: "خطا لم تتم عمليه رفع المعلومات",
+                    // pop: true,),
                     
                 
               
